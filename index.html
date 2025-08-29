@@ -3,122 +3,66 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Modlar</title>
+  <title>Tek Düğme</title>
   <style>
-    /* Minimal, şık karanlık tema + animasyonlu arkaplan */
-    :root{
-      --bg-1:#071022; --bg-2:#05102a; --card:#071429; --accent:#60a5fa; --accent-2:#3b82f6;
-      --glass: rgba(255,255,255,0.03);
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+    /* Basit, insan yapmış gibi ama gözü hoş */
+    :root{font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;}
+    body{height:100vh;display:flex;align-items:center;justify-content:center;background:#f6f7fb;margin:0}
+    .card{background:white;padding:28px;border-radius:12px;box-shadow:0 6px 20px rgba(16,24,40,.08);text-align:center;width:320px}
+    h1{font-size:18px;margin:0 0 12px;color:#111827}
+    p{font-size:13px;color:#6b7280;margin:0 0 18px}
+    button{
+      appearance:none;border:0;padding:10px 18px;border-radius:8px;
+      font-size:15px;font-weight:600;
+      cursor:pointer;
+      background:linear-gradient(180deg,#2563eb,#1e40af);color:white;
+      box-shadow:0 6px 18px rgba(37,99,235,.18)
     }
-    html,body{height:100%;margin:0}
-    body{
-      background: linear-gradient(180deg,var(--bg-1),var(--bg-2));
-      overflow:hidden;display:grid;place-items:center;padding:24px;color:#e6eef8
-    }
-
-    /* arkaplanda yumuşak hareket eden bulanık bloblar */
-    .bg-blob{
-      position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);pointer-events:none;z-index:0;
-      width:140vmax;height:140vmax;filter:blur(80px);opacity:.6;
-      background:radial-gradient(circle at 20% 30%, rgba(96,165,250,0.14) 0%, transparent 18%),
-                 radial-gradient(circle at 80% 70%, rgba(59,130,246,0.12) 0%, transparent 18%),
-                 radial-gradient(circle at 40% 70%, rgba(99,102,241,0.10) 0%, transparent 20%);
-      animation:blobMove 18s linear infinite;
-    }
-    @keyframes blobMove{
-      0%{transform:translate(-48%,-52%) rotate(0deg)}
-      50%{transform:translate(-52%,-48%) rotate(18deg)}
-      100%{transform:translate(-48%,-52%) rotate(0deg)}
-    }
-
-    /* hafif yıldız/partikül efekti */
-    .particles{position:fixed;inset:0;z-index:0;pointer-events:none}
-    .particle{position:absolute;background:rgba(255,255,255,0.06);width:2px;height:2px;border-radius:50%;box-shadow:0 0 6px rgba(255,255,255,0.03)}
-
-    /* ana küçük kart ve içerik */
-    .wrap{position:relative;z-index:5;text-align:center}
-    .label{font-size:14px;color:#9ca3af;margin-bottom:12px;letter-spacing:.4px}
-
-    .btn{
-      -webkit-tap-highlight-color:transparent;
-      display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:12px 28px;border-radius:12px;border:1px solid rgba(255,255,255,0.06);
-      background:linear-gradient(180deg,rgba(255,255,255,0.03), rgba(255,255,255,0.01));color:#eaf2ff;font-weight:800;font-size:15px;cursor:pointer;
-      box-shadow:0 6px 30px rgba(11,20,44,0.6), 0 0 18px rgba(59,130,246,0.08) inset;
-      transition:transform .14s cubic-bezier(.2,.9,.2,1), box-shadow .14s ease, background .14s ease;
-      min-width:160px
-    }
-    .btn::after{content:'';position:absolute;inset:auto 12px 12px 12px;border-radius:10px;pointer-events:none}
-    .btn:hover{transform:translateY(-4px);box-shadow:0 14px 40px rgba(59,130,246,0.18), 0 0 28px rgba(59,130,246,0.06) inset}
-    .btn:active{transform:translateY(-1px)}
-    .btn[disabled]{opacity:.7;cursor:default;transform:none}
-
-    /* neon glow alt çizgi */
-    .btn-glow{position:relative}
-    .btn-glow:before{content:'';position:absolute;left:10%;right:10%;bottom:-10px;height:8px;border-radius:8px;background:linear-gradient(90deg,var(--accent),var(--accent-2));filter:blur(12px);opacity:.6}
-
-    /* küçük ekran uyumu */
-    @media (max-width:480px){.btn{width:92%;padding:12px 18px}}
+    button:disabled{opacity:.6;cursor:default;background:linear-gradient(180deg,#94a3b8,#64748b)}
+    small{display:block;margin-top:12px;color:#9ca3af}
   </style>
 </head>
 <body>
-  <div class="bg-blob" aria-hidden="true"></div>
-  <div class="particles" id="particles" aria-hidden="true"></div>
-
-  <div class="wrap">
-    <div class="label">Modlar</div>
-    <button id="goto" class="btn btn-glow" aria-label="İndir">İndir</button>
+  <div class="card" role="main">
+    <h1>Hadi siktirip gidelim</h1>
+    <p>Skibidi Toiletlerin Kıyameti.</p>
+    <button id="goto" type="button">Bağlantıya git</button>
+    <small id="status">Hazır</small>
   </div>
 
   <script>
-    // Basit particle üretimi (çok hafif)
-    (function(){
-      const container = document.getElementById('particles');
-      const count = Math.min(60, Math.max(30, Math.floor(window.innerWidth/20)));
-      const w = window.innerWidth, h = window.innerHeight;
-      for(let i=0;i<count;i++){
-        const el = document.createElement('div');
-        el.className = 'particle';
-        const x = Math.random()*100; const y = Math.random()*100;
-        const size = (Math.random()*1.8)+0.6;
-        el.style.left = x + '%'; el.style.top = y + '%'; el.style.width = size+'px'; el.style.height = size+'px';
-        el.style.opacity = (Math.random()*0.6+0.08).toFixed(2);
-        container.appendChild(el);
-      }
-    })();
+    const btn = document.getElementById('goto');
+    const status = document.getElementById('status');
 
-    // link.txt okuma ve yönlendirme (çok basit)
-    (function(){
-      const btn = document.getElementById('goto');
-      async function fetchLink(timeoutMs=8000){
-        const controller = new AbortController();
-        const id = setTimeout(()=>controller.abort(), timeoutMs);
-        try{
-          const resp = await fetch('./link.txt',{cache:'no-store',signal:controller.signal});
-          clearTimeout(id);
-          if(!resp.ok) throw new Error('Dosya okunamadı');
-          const txt = await resp.text();
-          const first = txt.split(/
-?
-/).map(s=>s.trim()).find(Boolean);
-          if(!first) throw new Error('Geçerli link yok');
-          let url = first;
-          try{ new URL(url); }catch(e){ url = 'https://'+url; new URL(url); }
-          return url;
-        }catch(e){ clearTimeout(id); throw e; }
-      }
+    async function fetchAndGo() {
+      btn.disabled = true;
+      status.textContent = 'Link okunuyor...';
 
-      btn.addEventListener('click', async ()=>{
-        btn.disabled = true; const orig = btn.textContent; btn.textContent = 'Bekleyin...';
-        try{
-          const url = await fetchLink();
-          window.location.href = url;
-        }catch(e){
-          console.error(e);
-          btn.textContent = orig; btn.disabled = false;
-        }
-      });
-    })();
+      try {
+        // link.txt aynı dizinde olduğu varsayımıyla fetch
+        const resp = await fetch('./link.txt', { cache: 'no-store' });
+        if (!resp.ok) throw new Error('Dosya okunamadı: ' + resp.status);
+
+        let text = await resp.text();
+        text = text.trim();
+        if (!text) throw new Error('link.txt boş.');
+
+        // Basit güvenlik: metin içinde yeni satırlardan sonra da olsa sadece ilk satırı al
+        const firstLine = text.split(/\r?\n/).map(s => s.trim()).find(Boolean);
+        if (!firstLine) throw new Error('link.txt içinde geçerli bir satır bulunamadı.');
+
+        status.textContent = 'Yönlendiriliyor...';
+        // Yeni sekmede açmak istersen: window.open(firstLine, '_blank');
+        window.location.href = firstLine;
+
+      } catch (err) {
+        console.error(err);
+        status.textContent = 'Hata: ' + (err.message || 'Bilinmeyen hata');
+        btn.disabled = false;
+      }
+    }
+
+    btn.addEventListener('click', fetchAndGo);
   </script>
 </body>
 </html>
