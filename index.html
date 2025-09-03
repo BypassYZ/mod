@@ -1,68 +1,129 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Minorite</title>
-  <style>
-    /* Basit, insan yapmış gibi ama gözü hoş */
-    :root{font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;}
-    body{height:100vh;display:flex;align-items:center;justify-content:center;background:#f6f7fb;margin:0}
-    .card{background:white;padding:28px;border-radius:12px;box-shadow:0 6px 20px rgba(16,24,40,.08);text-align:center;width:320px}
-    h1{font-size:18px;margin:0 0 12px;color:#111827}
-    p{font-size:13px;color:#6b7280;margin:0 0 18px}
-    button{
-      appearance:none;border:0;padding:10px 18px;border-radius:8px;
-      font-size:15px;font-weight:600;
-      cursor:pointer;
-      background:linear-gradient(180deg,#2563eb,#1e40af);color:white;
-      box-shadow:0 6px 18px rgba(37,99,235,.18)
-    }
-    button:disabled{opacity:.6;cursor:default;background:linear-gradient(180deg,#94a3b8,#64748b)}
-    small{display:block;margin-top:12px;color:#9ca3af}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>İndirme Sayfası</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden; /* Sayfada kaydırma çubuğu oluşmasını engeller */
+        }
+
+        #particles-js {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: #1a1a2e;
+            background-image: url(''); /* İsteğe bağlı arkaplan resmi */
+            background-size: cover;
+            background-position: 50% 50%;
+            background-repeat: no-repeat;
+            z-index: -1; /* Animasyonun diğer içeriklerin arkasında kalmasını sağlar */
+        }
+
+        .content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+            color: white;
+        }
+
+        #downloadButton {
+            padding: 18px 35px;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #ffffff;
+            background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        #downloadButton:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        #downloadButton:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        #downloadButton:disabled {
+            background: #555;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+    </style>
 </head>
 <body>
-  <div class="card" role="main">
-    <h1>Minorite Modları</h1>
-    <p>Mod Paketi Değildir!( Çünkü Beceriksizim :( )</p>
-    <button id="goto" type="button">İndir</button>
-    <small id="status">Hazır</small>
-  </div>
+    <div id="particles-js"></div>
+    <div class="content">
+        <button id="downloadButton">İndir</button>
+    </div>
 
-  <script>
-    const btn = document.getElementById('goto');
-    const status = document.getElementById('status');
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    <script>
+        /* particles.js animasyonunu başlat */
+        particlesJS('particles-js', {
+          "particles": {
+            "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
+            "color": { "value": "#ffffff" },
+            "shape": { "type": "circle" },
+            "opacity": { "value": 0.5, "random": false },
+            "size": { "value": 3, "random": true },
+            "line_linked": { "enable": true, "distance": 150, "color": "#ffffff", "opacity": 0.4, "width": 1 },
+            "move": { "enable": true, "speed": 6, "direction": "none", "random": false, "straight": false, "out_mode": "out", "bounce": false }
+          },
+          "interactivity": {
+            "detect_on": "canvas",
+            "events": { "onhover": { "enable": true, "mode": "repulse" }, "onclick": { "enable": true, "mode": "push" }, "resize": true },
+            "modes": { "repulse": { "distance": 100, "duration": 0.4 }, "push": { "particles_nb": 4 } }
+          },
+          "retina_detect": true
+        });
 
-    async function fetchAndGo() {
-      btn.disabled = true;
-      status.textContent = 'Link okunuyor...';
+        /* Geliştirilmiş indirme düğmesi işlevselliği */
+        document.addEventListener('DOMContentLoaded', () => {
+            const downloadButton = document.getElementById('downloadButton');
+            let downloadUrl = null;
 
-      try {
-        // link.txt aynı dizinde olduğu varsayımıyla fetch
-        const resp = await fetch('./link.txt', { cache: 'no-store' });
-        if (!resp.ok) throw new Error('Dosya okunamadı: ' + resp.status);
+            // Sayfa yüklenince linki al ve hazırda tut
+            fetch('link.txt')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Dosya bulunamadı veya sunucu hatası.');
+                    }
+                    return response.text();
+                })
+                .then(url => {
+                    const trimmedUrl = url.trim();
+                    if (trimmedUrl) {
+                        downloadUrl = trimmedUrl;
+                    } else {
+                        throw new Error('Link dosyası boş.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Link alınamadı:', error.message);
+                    downloadButton.textContent = 'Link Hatalı';
+                    downloadButton.disabled = true;
+                });
 
-        let text = await resp.text();
-        text = text.trim();
-        if (!text) throw new Error('link.txt boş.');
-
-        // Basit güvenlik: metin içinde yeni satırlardan sonra da olsa sadece ilk satırı al
-        const firstLine = text.split(/\r?\n/).map(s => s.trim()).find(Boolean);
-        if (!firstLine) throw new Error('link.txt içinde geçerli bir satır bulunamadı.');
-
-        status.textContent = 'Yönlendiriliyor...';
-        // Yeni sekmede açmak istersen: window.open(firstLine, '_blank');
-        window.location.href = firstLine;
-
-      } catch (err) {
-        console.error(err);
-        status.textContent = 'Hata: ' + (err.message || 'Bilinmeyen hata');
-        btn.disabled = false;
-      }
-    }
-
-    btn.addEventListener('click', fetchAndGo);
-  </script>
+            // Düğmeye tıklandığında hazır olan linki kullan
+            downloadButton.addEventListener('click', () => {
+                if (downloadUrl) {
+                    window.location.href = downloadUrl;
+                }
+            });
+        });
+    </script>
 </body>
 </html>
